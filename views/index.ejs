@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title><%=title%></title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  </head>
+  <body>
+      
+    <div class="container">
+         
+        <h1 class="text-center">
+            JSON to Excel File
+        </h1>
+        <div class="div row"> 
+            <div class="col-md-6"> 
+                <form action="/jsontoexcel" method="post">
+                    <div class="form-group">
+                            <label for="regno">Register Number</label>
+                            <input class="form-control" onkeypress="return isNumber(event)" type="number" id="regno" placeholder="Enter Your Register Number!" minlength="10" maxlength="10"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student_name">Student Name</label>
+                        <input class="form-control" onkeypress="return isAlfa(event)" type="text" id="sname" placeholder="Enter Your Name!" minlength="3" maxlength="30"/>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="course">Course & Branch</label>
+                        <input class="form-control" onkeypress="return isAlfa(event)" type="text" id="course" placeholder="Enter Your Course & Branch!" minlength="3" maxlength="30"/>
+                    </div>
+            </div>    
+            <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="sem">Semester</label>
+                        <input class="form-control"  onkeypress="return isNumber(event)" type="number" id="semno" placeholder="Enter Your Semester Number!" maxlength="30"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject_no">Total Number of Subjects</label>
+                        <input class="form-control"  onkeypress="return isNumber(event)" type="number" id="subno" placeholder="Enter total Number of Subjects !" maxlength="20"/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" id="addsubmark">Add Subject & Marks</button>
+                    </div>
+            </div>
+            <div id="submarks"></div>
+        </div>     
+    </div>
+            <div class="container">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-block" id="btn">Click to Add</button>
+                    </div>
+                            
+                    <div class="form-group" id="msg">
+                        <label for="json">JSON DATA:</label>
+                        <textarea class="form-control" id="jsonarea" name="json" cols="30" rows="10" placeholder="Paste Your JSON Here!"></textarea>
+                    </div>
+                        
+                    <div class="form-group">
+                        <button class="btn btn-danger btn-block">
+                            Download Excel File
+                        </button>
+                    </div>
+                </form>        
+            </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script>
+            let student_details = [];
+            var i;
+            const showbtn = (cv)=>{
+
+            cv.preventDefault(); 
+            
+            var totalsub = document.getElementById("subno").value;
+            
+            if(totalsub != 0)
+            {
+                for(i=1;i<=totalsub;i++){
+                    var objTo = document.getElementById('submarks')
+                    var divtest = document.createElement("div");
+                    divtest.setAttribute("class", "form-group submark"+ i);
+                    divtest.innerHTML = '<div class="row container"><div class="col-md-8 form-group"><label for="subject_name">'+i+'. Subject Name</label><input class="form-control" required type="text" id="subname'+i+'" placeholder="Enter Your Subject Name!" maxlength="150"/></div><div class="col-md-4 form-group"><label for="mark">'+i+'. Marks</label><input class="form-control" required type="number" id="mark'+i+'" placeholder="Marks!" maxlength="100"/></div></div>'
+                    objTo.appendChild(divtest)
+                }
+                
+            }
+            else{
+                alert("Please Enter Total Number of Subjects!");
+            }
+            
+            }
+            document.addEventListener('DOMContentLoaded', ()=>{
+                document.getElementById('addsubmark').addEventListener('click', showbtn);
+            });
+
+            let all_subject_details=[];
+
+            const adddetails = (ev)=>{
+
+            ev.preventDefault();
+
+            var regno = document.getElementById('regno').value;
+            var sname = document.getElementById('sname').value;
+            var course = document.getElementById('course').value;
+            var sem = document.getElementById('semno').value;
+            var no_sub = document.getElementById('subno').value; 
+
+            if(regno == ""){
+                
+                alert("Please Fill proper details in every fields");
+                document.getElementById("jsonarea").reset();
+            }
+            if(sname == ""){
+                
+                alert("Please Fill proper details in every fields");
+                document.getElementById("jsonarea").reset();
+            }
+            if(course == ""){
+                
+                alert("Please Fill proper details in every fields");
+                document.getElementById("jsonarea").reset();
+            }
+            if(sem == ""){
+                
+                alert("Please Fill proper details in every fields");
+                document.getElementById("jsonarea").reset();
+            }
+            if(no_sub == ""){
+                
+                alert("Please Fill proper details in every fields");
+                document.getElementById("jsonarea").reset();
+            }
+            
+            let details = {
+                Register_No: document.getElementById('regno').value,
+                Student_Name: document.getElementById('sname').value,
+                Course: document.getElementById('course').value,
+                Semester: document.getElementById('semno').value,
+                Number_of_Subjects: document.getElementById('subno').value,
+            }
+
+            //console.log(details);
+            
+            //console.log(student_details);
+                var totalsub = document.getElementById("subno").value;
+                let sub='';
+                for(i=1;i<=totalsub;i++){
+                    
+                   if(sub==''){
+                       sub=document.getElementById('subname'+i).value+"-"+document.getElementById('mark'+i).value;
+                   }else{
+                    sub+=","+document.getElementById('subname'+i).value+"-"+document.getElementById('mark'+i).value;
+                   
+                }
+            //console.log(sub);
+           
+            } 
+            details['Subjects - Marks']=sub;
+            student_details.push(details);
+            //console.log(student_details);
+            document.forms[0].reset();
+
+            console.warn('added' , {student_details} );
+            let pre = document.querySelector('#msg textarea');
+            pre.textContent = '\n' + JSON.stringify(student_details, '\t', 2);
+        }
+            
+            document.addEventListener('DOMContentLoaded', ()=>{
+            document.getElementById('btn').addEventListener('click', adddetails,showbtn);
+            });
+
+            function isAlfa(evt) {
+                evt = (evt) ? evt : window.event;
+                var charCode = (evt.which) ? evt.which : evt.keyCode;
+                if (charCode > 32 && (charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122 )) {
+                    return false;
+                }
+                return true;
+            }
+
+            function isNumber(event){
+                var keycode = event.keyCode;
+                if(keycode>=48 && keycode<58){
+                    return true;
+                }
+                return false;
+            }
+        
+           
+        </script>  
+        <style>
+            .hide{
+                display: none;
+            }
+        </style>
+</body>
+</html>
